@@ -1,12 +1,7 @@
 import React, { useState } from 'react';
 import {
     FaTh,
-    FaBars,
-    FaUserAlt,
-    FaRegChartBar,
-    FaCommentAlt,
-    FaShoppingBag,
-    FaThList
+    FaBars
 }from "react-icons/fa";
 
 import {BsFillGearFill} from 'react-icons/bs'

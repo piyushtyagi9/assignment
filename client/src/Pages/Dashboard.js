@@ -3,10 +3,12 @@ import { Link, useNavigate } from "react-router-dom";
 import { Container, Row, Col } from 'react-grid-system';
 import { AiFillEdit } from 'react-icons/ai'
 import { BsTrashFill } from 'react-icons/bs'
+import {TiDelete} from 'react-icons/ti'
 import { GrView } from 'react-icons/gr'
 import style from './Dashboard.module.css'
 import TextExample from '../Components/cards'
-import '../../node_modules/bootstrap/dist/css/bootstrap.min.css';
+import 'reactjs-popup/dist/index.css';
+
 
 const Dashboard = () => {
     const [empdata, empdatachange] = useState([]);
@@ -85,9 +87,21 @@ const Dashboard = () => {
     let str2 = "Total Pages"
     let str3 = "Per Page Count"
 
+    const [modal, setModal] = useState(false);
+
+    const toggleModal = () => {
+        setModal(!modal);
+    };
+
+    if (modal) {
+        document.body.classList.add('active-modal')
+    } else {
+        document.body.classList.remove('active-modal')
+    }
+
     return (
         <>
-        <Container className="text-centre">
+            <Container className="text-centre">
                 <Row>
                     <Col sm={4} className='grid'>
                         <TextExample data={str1} />
@@ -103,73 +117,99 @@ const Dashboard = () => {
             <br></br>
             <br></br>
             <br></br>
-        <div className="text-centre container">
-            <div className="">
-                <div className="card-title">
-                    <h2>Employee List</h2>
-                </div>
-                <div className="card-body">
-                    <div className={style.btnsection}>
-                        <Link to="employee/create" className={style.button71}>
-                            Add New
-                        </Link>
-                        <input
-                            type="text"
-                            className={style.search}
-                            placeholder="Search by name"
-                            value={searchTerm}
-                            onChange={(e) => setSearchTerm(e.target.value)}
-                        />
+            <div className="text-centre container">
+                <div className="">
+                    <div className="card-title">
+                        <h2>Employee List</h2>
                     </div>
-                    <table className="table table-bordered">
-                        <thead className="bg-dark text-white">
-                            <tr>
-                                <td><b>ID</b></td>
-                                <td><b>Name</b></td>
-                                <td><b>Email</b></td>
-                                <td><b>Phone</b></td>
-                                <td><b>Action</b></td>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {currentItems &&
-                                currentItems.map((item, index) => (
-                                    <tr key={item.id}>
-                                        <td>{item._id}</td>
-                                        <td>{item.name}</td>
-                                        <td>{item.Email}</td>
-                                        <td>{item.Phone}</td>
-                                        <td>
-                                            <a onClick={() => LoadEdit(item._id)} className="btn btn-success">
-                                                <AiFillEdit />
-                                            </a>
-                                            <a onClick={() => Removefunction(item._id)} className="btn btn-danger">
-                                                <BsTrashFill />
-                                            </a>
-                                            <a onClick={() => LoadDetail(item._id)} className="btn btn-primary">
-                                                <GrView />
-                                            </a>
-                                        </td>
-                                    </tr>
-                                ))}
-                        </tbody>
-                    </table>
-                    <div className={style.button25}>
-                        <button onClick={prevPage} className= 'btn btn-primary text-centre m-1' disabled={currentPage === 1}>
-                            Previous Page
-                        </button>
+                    <div className="card-body">
+                        <div className={style.btnsection}>
+                            <Link to="employee/create" className={style.button71}>
+                                Add New
+                            </Link>
+                            <input
+                                type="text"
+                                className={style.search}
+                                placeholder="Search by name"
+                                value={searchTerm}
+                                onChange={(e) => setSearchTerm(e.target.value)}
+                            />
+                        </div>
+                        <table className="table table-bordered">
+                            <thead className="bg-dark text-white">
+                                <tr>
+                                    <td><b>ID</b></td>
+                                    <td><b>Name</b></td>
+                                    <td><b>Email</b></td>
+                                    <td><b>Phone</b></td>
+                                    <td><b>Action</b></td>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {currentItems &&
+                                    currentItems.map((item, index) => (
+                                        <tr key={item.id}>
+                                            <td>{item._id}</td>
+                                            <td>{item.name}</td>
+                                            <td>{item.Email}</td>
+                                            <td>{item.Phone}</td>
+                                            <td>
+                                                <a onClick={() => LoadEdit(item._id)} className="btn btn-success m-1">
+                                                    <AiFillEdit />
+                                                </a>
+                                                <button onClick={toggleModal} className="btn btn-primary">
+                                                    <GrView />
+                                                </button>
 
-                        <button
-                            onClick={nextPage}
-                            className='btn btn-primary text-centre' 
-                            disabled={currentPage === Math.ceil(filteredData.length / itemsPerPage)}
-                        >
-                            Next Page
-                        </button>
+                                                {modal && (
+                                                    <div className={style.modal}>
+                                                        <div onClick={toggleModal} className={style.overlay}></div>
+                                                        <div className={style.modalcontent}>
+                                                            {item &&
+                                                                <div>
+                                                                    <a className={style.closemodal} onClick={toggleModal}>
+                                                                        <TiDelete/>
+                                                                    </a>
+                                                                    <h3>
+                                                                        Employee Detail
+                                                                    </h3>
+                                                                    <br></br>
+                                                                    <br></br>
+                                                                    <h5>Name : {item.name}</h5>
+                                                                    <h5>Id : {item._id}</h5>
+                                                                    <h5>Email : {item.Email}</h5>
+                                                                    <h5>Phone : {item.Phone}</h5>
+
+                                                                </div>
+                                                            }
+
+                                                        </div>
+                                                    </div>
+                                                )}
+                                                <a onClick={() => Removefunction(item._id)} className="btn btn-danger m-1">
+                                                    <BsTrashFill />
+                                                </a>
+                                            </td>
+                                        </tr>
+                                    ))}
+                            </tbody>
+                        </table>
+                        <div className={style.button25}>
+                            <button onClick={prevPage} className='btn btn-primary text-centre m-3' disabled={currentPage === 1}>
+                                Previous Page
+                            </button>
+
+                            <button
+                                onClick={nextPage}
+                                className='btn btn-primary text-centre'
+                                disabled={currentPage === Math.ceil(filteredData.length / itemsPerPage)}
+                            >
+                                Next Page
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
         </>
     );
 
